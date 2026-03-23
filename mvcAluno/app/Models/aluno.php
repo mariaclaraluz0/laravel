@@ -7,6 +7,6 @@ class Aluno extends Model
 {
     protected $fillable = [
         'nome',
-        'emai'
+        'email'
     ];
 }

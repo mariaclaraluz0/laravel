@@ -20,11 +20,13 @@
 <tbody>
     @forelse($alunos as $aluno)
     <tr>
-        <td>{{aluno->id}}</td>
-        <td>{{aluno->nome}}</td>
-        <td>{{aluno->email}}</td>
-        <td>faremos na proxima aula</td>
-        <td>faremos na proxima aula</td>
+        <td>{{$aluno->id}}</td>
+        <td>{{$aluno->nome}}</td>
+        <td>{{$aluno->email}}</td>
+        <td>
+            <a href="{{route('aluno.atualizar', $aluno->id)}}">Atualizar</a>
+         </td>
+        <td></td>
 
 </tr>
     @empty
@@ -32,5 +34,7 @@
         <td colspan="3">nemhum aluno encontrado</td>
 </tr>
 @endforelse
+ </tbody>
+    </table>
     </body>
 </html>
