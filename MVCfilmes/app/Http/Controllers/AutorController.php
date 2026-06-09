@@ -7,11 +7,32 @@ use Illuminate\Http\Request;
 
 class AutorController extends Controller
 {
-    public function listar()
+    public function listar(Request $request)
     {
-        $autores = Autor::all();
+        try {
+            $query = Autor::query();
 
-        return view('listarAutores', compact('autores'));
+            // Filtro por nome
+            if ($request->filled('nome')) {
+                $query->where('nome', 'like', '%' . $request->nome . '%');
+            }
+
+            // Filtro por telefone
+            if ($request->filled('telefone')) {
+                $query->where('telefone', 'like', '%' . $request->telefone . '%');
+            }
+
+            $autores = $query->get();
+
+            return view('listarAutores', compact('autores'));
+
+        } catch (\Exception $e) {
+
+            return view('listarAutores', [
+                'autores' => collect(),
+                'erro' => 'Erro interno do servidor'
+            ]);
+        }
     }
 
     public function add(Request $request)
@@ -19,8 +40,8 @@ class AutorController extends Controller
         $request->validate([
             'nome' => 'required|string|max:255',
             'data_nascimento' => 'required|date',
-            'email' => 'required|string|max:255',
-            'telefone' => 'required|string|max:255'
+            'email' => 'required|email|max:255',
+            'telefone' => 'required|string|max:20'
         ]);
 
         Autor::create([

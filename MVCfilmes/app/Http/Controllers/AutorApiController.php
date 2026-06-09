@@ -21,6 +21,7 @@ class AutorApiController extends Controller
             'data_nascimento' => 'required|date',
             'email' => 'required|string|max:255',
             'telefone' => 'required|string|max:255'
+
         ]);
 
         $autor = Autor::create([

@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <title>Autores</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 
 <div class="container mt-5">
 
     <h1>Autores</h1>
 
-    <form action="{{ route('autor.add') }}" method="POST" class="mb-5">
-        @csrf
+<form method="GET" action="{{ route('autor.listar') }}">
 
-        <input type="text" name="nome" placeholder="Nome" class="form-control mb-2">
+    <input type="text"
+           name="nome"
+           placeholder="Digite o nome do Autor"
+           value="{{ request('nome') }}">
 
-        <input type="date" name="data_nascimento" class="form-control mb-2">
+    <input type="text"
+           name="telefone"
+           placeholder="Digite o telefone"
+           value="{{ request('telefone') }}">
 
-        <input type="email" name="email" placeholder="Email" class="form-control mb-2">
+    <button type="submit" class="btn btn-primary">
+        Buscar
+    </button>
 
-        <input type="text" name="telefone" placeholder="Telefone" class="form-control mb-2">
+</form>
 
-        <button class="btn btn-primary">
-            Cadastrar
-        </button>
-    </form>
-
-    <table class="table table-bordered">
-
+    <table class="table table-bordered mt-3">
         <thead>
             <tr>
                 <th>ID</th>
@@ -39,22 +42,22 @@
         </thead>
 
         <tbody>
-
-            @foreach($autores as $autor)
-
-            <tr>
-                <td>{{ $autor->id }}</td>
-                <td>{{ $autor->nome }}</td>
-                <td>{{ $autor->email }}</td>
-            </tr>
-
-            @endforeach
-
+            @forelse ($autores as $autor)
+                <tr>
+                    <td>{{ $autor->id }}</td>
+                    <td>{{ $autor->nome }}</td>
+                    <td>{{ $autor->email }}</td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="3">Nenhum autor encontrado.</td>
+                </tr>
+            @endforelse
         </tbody>
-
     </table>
 
 </div>
 
 </body>
+
 </html>

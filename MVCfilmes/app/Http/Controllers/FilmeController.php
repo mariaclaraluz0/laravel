@@ -8,18 +8,31 @@ use Illuminate\Http\Request;
 
 class FilmeController extends Controller
 {
-    public function listar()
+    public function listar(Request $request)
     {
-        $filmes = Filme::with('autor')->get();
+        try {
+            $query = Filme::query();
 
-        return view('listarFilmes', compact('filmes'));
-    }
+            //título
+            if ($request->filled('titulo')) {
+                $query->where('titulo', 'like', '%' . $request->titulo . '%');
+            }
 
-    public function cadastro()
-    {
-        $autores = Autor::get();
+            // data lanç
+            if ($request->filled('data_lancamento')) {
+                $query->where('data_lancamento', $request->data_lancamento);
+            }
 
-        return view('cadastroFilme', compact('autores'));
+            $filmes = $query->get();
+
+            return view('listarFilmes', compact('filmes'));
+
+        } catch (\Exception $e) {
+            return view('listarFilmes', [
+                'filmes' => collect(),
+                'erro' => 'Erro interno do servidor'
+            ]);
+        }
     }
 
     public function add(Request $request)
@@ -27,10 +40,10 @@ class FilmeController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:255',
             'data_lancamento' => 'required|date',
-            'sinopse' => 'required|string|max:255',
+            'sinopse' => 'required|string|max:500',
             'genero' => 'required|string|max:255',
             'orcamento' => 'required|numeric',
-            'autor_id' => 'nullable|exists:autor,id'
+            'autor_id' => 'required|exists:autores,id'
         ]);
 
         Filme::create([
@@ -49,7 +62,8 @@ class FilmeController extends Controller
     public function atualizar($id)
     {
         $filme = Filme::findOrFail($id);
-        $autores = Autor::get();
+
+        $autores = Autor::all();
 
         return view('atualizarFilme', compact('filme', 'autores'));
     }
@@ -59,24 +73,24 @@ class FilmeController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:255',
             'data_lancamento' => 'required|date',
-            'sinopse' => 'required|string|max:255',
+            'sinopse' => 'required|string|max:500',
             'genero' => 'required|string|max:255',
             'orcamento' => 'required|numeric',
-            'autor_id' => 'nullable|exists:autor,id'
+            'autor_id' => 'required|exists:autores,id'
         ]);
 
         $filme = Filme::findOrFail($id);
 
-        $filme->titulo = $request->titulo;
-        $filme->data_lancamento = $request->data_lancamento;
-        $filme->sinopse = $request->sinopse;
-        $filme->genero = $request->genero;
-        $filme->orcamento = $request->orcamento;
-        $filme->autor_id = $request->autor_id;
+        $filme->update([
+            'titulo' => $request->titulo,
+            'data_lancamento' => $request->data_lancamento,
+            'sinopse' => $request->sinopse,
+            'genero' => $request->genero,
+            'orcamento' => $request->orcamento,
+            'autor_id' => $request->autor_id
+        ]);
 
-        $filme->save();
-
-        return redirect()->back()
+        return redirect()->route('filme.listar')
             ->with('success', 'Filme atualizado com sucesso!');
     }
 
@@ -87,6 +101,6 @@ class FilmeController extends Controller
         $filme->delete();
 
         return redirect()->route('filme.listar')
-            ->with('success', 'Filme excluído com sucesso!');
+            ->with('success', 'Filme deletado com sucesso!');
     }
 }
