@@ -4,20 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class detalheProduto extends Model
+class DetalheProdutos extends Model
 {
-    protected $table = 'detalhe_produtos'; 
+    protected $table = 'DetalheProdutos';
 
     protected $fillable = [
         'descricao',
         'tamanho',
         'peso',
-        'produto_id', // se for relacionado a produto
+        'produto_id'
     ];
 
-    // Relacionamento com Produto
-    public function produto()
-    {
+    public function produto(){
         return $this->belongsTo(Produto::class);
     }
 }

@@ -1,0 +1,13 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SetorApiController;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+Route::get('setores',[SetorApiController::class, 'listarApi']);
+Route::post('setor/add',[SetorApiController::class, 'addApi']);
+Route::put('setor/tualizar/{id}',[SetorApiController::class, 'updateApi']);
